@@ -223,16 +223,13 @@
         img.height = 300;
         img.src = "/SpringProject/studentPhoto?studentId=" + studentId;
 
-        // Remove the existing image (if any)
         while (photoContainer.firstChild) {
             photoContainer.removeChild(photoContainer.firstChild);
         }
 
-        // Append the new image
         photoContainer.appendChild(img);
     }
 
-    // Call the function to update the photo for the selected student
     updateStudentPhoto("${selectedStudent.studentId}");
 </script>
 

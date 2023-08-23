@@ -175,7 +175,7 @@
                 <td>${user.userName}</td>
                 <td>
                     <a href="/SpringProject/UpdateView/${user.userId}" class="btn btn-success btn-sm">Edit</a>
-                    <a href="/SpringProject/deleteUser/${user.userId}" class="btn btn-secondary btn-sm">Delete</a>
+                    <a href="/SpringProject/deleteUser/${user.userId}" class="btn btn-secondary btn-sm"   onclick="return confirm('Are you sure you want to delete this student\'s record?')">Delete</a>
                 </td>
             </tr>
         </c:forEach>

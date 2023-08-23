@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import Registration.model.UserBean;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -62,11 +63,14 @@ public class StudentController {
     @RequestMapping(value = "/StudentRegisterProcess", method = RequestMethod.POST)
     public String registerProcess(@ModelAttribute("studentBean") @Validated StudentBean sb, ModelMap m,
                                   BindingResult br, HttpSession session, @RequestParam("studentPhoto") MultipartFile studentPhoto) throws Exception {
+
+
         int nextStudentId = studentDao.getStudentCount() + 1;
         m.addAttribute("nextStudentId", nextStudentId);
-
+        ArrayList<CourseResponseDTO> cList = courseDAO.getAllCourses();
         if (session.getAttribute("isLoggedIn") == null) {
             System.out.println("not logged in ");
+            m.addAttribute("loginBean", new UserBean());
             return "Login";
         }
 
@@ -87,6 +91,8 @@ public class StudentController {
             m.addAttribute("blank", "Field Cannot be blank");
             m.addAttribute("nextStudentId", nextStudentId);
             m.addAttribute("currentUser", currentUser);
+            m.addAttribute("cList", cList);
+
             return "StudentRegister";
         }
         if (studentPhoto.equals("") || studentPhoto == null) {
@@ -115,6 +121,7 @@ public class StudentController {
                 m.addAttribute("Dup", "This name or phone number already exist");
                 m.addAttribute("nextStudentId", nextStudentId);
                 m.addAttribute("currentUser", currentUser);
+                m.addAttribute("cList", cList);
 
                 return "StudentRegister";
             }
@@ -128,6 +135,8 @@ public class StudentController {
             if (result == 0) {
                 m.addAttribute("fail", "Register Failed");
                 m.addAttribute("nextStudentId", nextStudentId);
+                m.addAttribute("cList", cList);
+
                 return "StudentRegiter";
 
             }

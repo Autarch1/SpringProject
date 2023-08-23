@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
 
+import Registration.util.PasswordHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -35,11 +36,13 @@ public class UserController {
 
     @RequestMapping(value = "/Login", method=RequestMethod.GET)
     public ModelAndView home() {
+        System.out.println("in get method()");
         return new ModelAndView("Login", "loginBean", new UserBean());
     }
     @RequestMapping(value = "/LoginProcess", method = RequestMethod.POST)
     public String login(@ModelAttribute("loginBean") @Validated UserBean ub,
                         BindingResult br,ModelMap m,HttpSession session) {
+        System.out.println("in post method()");
         ArrayList<UserResponseDTO> resList = userDao.getAllUser();
         UserResponseDTO admin = userDao.getAdmin();
 
@@ -50,10 +53,9 @@ public class UserController {
             return "/Login";
         }
 
-        if(admin.getUserEmail().equals(ub.getUserEmail()) && admin.getUserPassword().equals(ub.getUserPassword())) {
+        if(admin.getUserEmail().trim().equals(ub.getUserEmail()) && admin.getUserPassword().equals(ub.getUserPassword())) {
             isAdmin=true;
             System.out.println("Admin");
-
             session.setAttribute("isLoggedIn", "LogIn");
             session.setAttribute("isAdmin", isAdmin);
             session.setAttribute("currentUser", admin);
@@ -64,7 +66,7 @@ public class UserController {
 
         if(!isAdmin) {
             for(UserResponseDTO res : resList) {
-                if(ub.getUserPassword().equals(res.getUserPassword()) && ub.getUserEmail().equals(res.getUserEmail())) {
+                if(PasswordHash.checkPassword(ub.getUserPassword() , res.getUserPassword()) && ub.getUserEmail().equals(res.getUserEmail())) {
                     isUser = true;
 
                     System.out.println("true");
@@ -170,6 +172,9 @@ public class UserController {
 
     @RequestMapping(value = "/UserProfileUpdate", method = RequestMethod.POST)
     public String update(@ModelAttribute("updatebean") @Validated UserBean ub,@RequestParam("cPassword") String cPasswrod,HttpSession session,ModelMap m) {
+
+       
+
         UserResponseDTO currentUser = (UserResponseDTO) session.getAttribute("currentUser");
         String userId = currentUser.getUserEmail();
         System.out.println("asdasd");

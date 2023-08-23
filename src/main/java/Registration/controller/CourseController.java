@@ -4,12 +4,14 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
 
+import Registration.model.UserBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,6 +20,7 @@ import Registration.dao.CourseDAO;
 import Registration.dto.CourseRequestDTO;
 import Registration.dto.CourseResponseDTO;
 import Registration.model.CourseBean;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class CourseController {
@@ -32,14 +35,15 @@ public class CourseController {
     }
 
     @RequestMapping(value = "/ProcessCourseRegister", method = RequestMethod.POST)
-    public String courseProcess(@ModelAttribute("courseBean") @Validated CourseBean cb,ModelMap m,
-                                BindingResult br,HttpSession session) {
+    public String courseProcess(@ModelAttribute("courseBean") @Validated CourseBean cb, ModelMap m,
+                                BindingResult br, HttpSession session, RedirectAttributes redirect) {
         if(br.hasErrors()) {
             return "CourseRegister";
         }
         if(session.getAttribute("isLoggedIn")==null) {
             System.out.println("not logged in ");
-            return "Login";
+            redirect.addFlashAttribute("loginBean", new UserBean());
+            return "redirect:/Login";
         }
 
         if(session.getAttribute("isAdmin")==null) {
@@ -58,7 +62,7 @@ public class CourseController {
         }
         ArrayList<CourseResponseDTO> resList = courseDao.getAllCourses();
         for(CourseResponseDTO crd : resList) {
-            if(cb.getCourseName().equals(crd.getCourseName())) {
+            if(cb.getCourseName().trim().equals(crd.getCourseName().trim())) {
                 isDupe=true;
 
                 m.addAttribute("nextCourseId", nextCourseId);

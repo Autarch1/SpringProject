@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Registration.util.PasswordHash;
 import org.springframework.stereotype.Service;
 
 
@@ -32,7 +33,7 @@ public class UserDAO {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, formattedUserId);
             ps.setString(2, dto.getUserName());
-            ps.setString(3, dto.getUserPassword());
+            ps.setString(3, PasswordHash.hashPassword(dto.getUserPassword()));
             ps.setString(4, dto.getUserRole());
             ps.setString(5, dto.getUserEmail());
             result = ps.executeUpdate();
@@ -153,7 +154,7 @@ public class UserDAO {
         try {
             PreparedStatement ps =con.prepareStatement(sql);
             ps.setString(1, dto.getUserName());
-            ps.setString(2, dto.getUserPassword());
+            ps.setString(2, PasswordHash.hashPassword(dto.getUserPassword()));
             ps.setString(3, dto.getUserEmail());
             result = ps.executeUpdate();
         } catch (SQLException e) {

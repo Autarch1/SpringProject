@@ -154,6 +154,10 @@
             <div class="col-md-4">
                 <input type="text" class="form-control search-input" name="userName" id="studentName" placeholder="Search Student Name">
             </div>
+            <div class="col-md-2
+">
+                <input type="text" class="form-control search-input" name="userCourse" id="studentCourse" placeholder="Search Course">
+            </div>
             <div class="col-md-2">
                 <button class="btn btn-primary search-btn" id="search-btn">Search</button>
             </div>
@@ -183,8 +187,8 @@
 
                 <td>
                     <a href="/SpringProject/StudentUpdate/${stud.studentId}" class="btn btn-success btn-sm">Edit</a>
-                    <a href="/SpringProject/deleteStudent/${stud.studentId}" class="btn btn-secondary btn-sm">Delete</a>
-                </td>
+                    <a href="/SpringProject/deleteStudent/${stud.studentId}" class="btn btn-secondary btn-sm"
+                       onclick="return confirm('Are you sure you want to delete this student\'s record?')">Delete</a>                </td>
             </tr>
         </c:forEach>
         </tbody>
@@ -198,15 +202,18 @@
         function filterTable() {
             var studentId = $("#studentId").val().toLowerCase();
             var studentName = $("#studentName").val().toLowerCase();
+            var studentCourse = $("#studentCourse").val().toLowerCase(); // Get selected course
 
             $("#studentListTable tr").each(function () {
                 var rowStudentId = $(this).find("td:eq(0)").text().toLowerCase();
                 var rowStudentName = $(this).find("td:eq(1)").text().toLowerCase();
+                var rowStudentCourse = $(this).find("td:eq(2)").text().toLowerCase(); // Get course from row
 
                 var matchesStudentId = rowStudentId.includes(studentId);
                 var matchesStudentName = rowStudentName.includes(studentName);
+                var matchesStudentCourse = rowStudentCourse.includes(studentCourse); // Check if selected course matches row course
 
-                if (matchesStudentId && matchesStudentName) {
+                if (matchesStudentId && matchesStudentName && matchesStudentCourse) {
                     $(this).show();
                 } else {
                     $(this).hide();
